@@ -4,16 +4,11 @@ export class TwitterConfig {
   private _accessToken: string;
   private _accessSecret: string;
 
-  constructor(
-    appKey: string,
-    appSecret: string,
-    accessToken: string,
-    accessSecret: string
-  ) {
-    this._appKey = appKey;
-    this._appSecret = appSecret;
-    this._accessToken = accessToken;
-    this._accessSecret = accessSecret;
+  constructor() {
+    this._appKey = process.env.APP_KEY!;
+    this._appSecret = process.env.APP_SECRET!;
+    this._accessToken = process.env.ACCESS_TOKEN!;
+    this._accessSecret = process.env.ACCESS_SECRET!;
   }
 
   public get appKey(): string {
