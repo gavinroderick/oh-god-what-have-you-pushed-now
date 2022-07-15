@@ -19,11 +19,13 @@ app.get("/ping", (req: Request, res: Response) => {
 
 app.post("/new-push", (req: Request, res: Response) => {
   const githubSignature = req.header("X-Hub-Signature-256");
-  if (githubSignature == undefined)
-    res.status(400).send("Could not find the header 'X-Hub-Signature-256'");
+  if (githubSignature == undefined) {
+    res.status(401).send("Could not find the header 'X-Hub-Signature-256'");
+  }
 
-  if (!WebhookValidator.SecretValid(req.body, githubSignature!))
-    res.status(400).send("Could not validate request");
+  if (!WebhookValidator.SecretValid(req.body, githubSignature!)) {
+    res.status(401).send("Could not validate request");
+  }
 
   res.sendStatus(200);
 });
