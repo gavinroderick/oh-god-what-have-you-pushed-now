@@ -2,7 +2,7 @@ import { TweetV2PostTweetResult, TwitterApi } from "twitter-api-v2";
 import { TwitterConfig } from "./TwitterConfig";
 
 export interface ITwitterService {
-  SendTweet(message: string): TweetV2PostTweetResult | string;
+  SendTweet(message: string): TweetV2PostTweetResult | null;
 }
 
 export class TwitterService implements ITwitterService {
@@ -18,17 +18,25 @@ export class TwitterService implements ITwitterService {
     });
   }
 
-  public SendTweet(message: string): TweetV2PostTweetResult | string {
+  public SendTweet(payload: any): TweetV2PostTweetResult | null {
+    var tweetText = this.buildTweet(payload);
+    console.log("Sending tweet: " + tweetText);
     this._client.v2
-      .tweet(message)
+      .tweet(tweetText)
       .then((resp) => {
-        console.log(resp);
+        console.log("Twitter Response: " + resp);
         return resp;
       })
       .catch((err) => {
         console.error(err);
         return err;
       });
-    return "Something went wrong (T_T)";
+    return null;
+  }
+
+  private buildTweet(payload: any): string {
+    const headCommit = payload.head_commit.message;
+    const repo = payload.repository.name;
+    return `Heads up, Gavin just pushed "${headCommit}" to the "${repo}" repo...`;
   }
 }

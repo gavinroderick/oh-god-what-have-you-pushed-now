@@ -1,4 +1,4 @@
-import { createHmac, sign, timingSafeEqual } from "crypto";
+import { createHmac, timingSafeEqual } from "crypto";
 
 export class WebhookValidator {
   static SecretValid(webhookBody: string, webhookSignature: string): boolean {
