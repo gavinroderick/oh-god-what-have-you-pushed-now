@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import { WebhookValidator } from "./WebhookValidator";
+import { TwitterService } from "./TwitterService";
 
 dotenv.config();
 
@@ -27,5 +28,7 @@ app.post("/new-push", (req: Request, res: Response) => {
     res.status(401).send("Could not validate request");
   }
 
+  const t = new TwitterService();
+  t.SendTweet(req.body);
   res.sendStatus(200);
 });
