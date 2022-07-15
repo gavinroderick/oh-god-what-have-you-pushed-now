@@ -8,7 +8,8 @@ export interface ITwitterService {
 export class TwitterService implements ITwitterService {
   private _client: TwitterApi;
 
-  constructor(config: TwitterConfig) {
+  constructor() {
+    const config = new TwitterConfig();
     this._client = new TwitterApi({
       appKey: config.appKey,
       appSecret: config.appSecret,
