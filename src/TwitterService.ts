@@ -20,11 +20,13 @@ export class TwitterService implements ITwitterService {
 
   public SendTweet(payload: any): TweetV2PostTweetResult | null {
     var tweetText = this.buildTweet(payload);
-    console.log("Sending tweet: " + tweetText);
+    console.log("Info: Sending tweet: " + tweetText);
     this._client.v2
       .tweet(tweetText)
       .then((resp) => {
-        console.log("Twitter Response: " + resp);
+        console.log(
+          `Info: Twitter returned code ${resp.data.id}: '${resp.data.text}'`
+        );
         return resp;
       })
       .catch((err) => {
