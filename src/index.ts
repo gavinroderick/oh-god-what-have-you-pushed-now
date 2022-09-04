@@ -20,18 +20,10 @@ app.get("/ping", (req: Request, res: Response) => {
 
 app.post("/new-push", (req: Request, res: Response) => {
   console.log("Info: /new-push endpoint hit");
-  const githubSignature = req.header("X-Hub-Signature-256");
-  if (githubSignature == undefined) {
-    return res
-      .status(401)
-      .send("Failed: Could not find the header 'X-Hub-Signature-256'");
-  }
 
-  if (!WebhookValidator.SecretValid(req.body, githubSignature!)) {
-    return res.status(401).send("Failed: Could not validate request");
+  if (WebhookValidator.InvalidRequest(req, res) == null) {
+    const t = new TwitterService();
+    t.SendTweet(req.body);
+    return res.sendStatus(200);
   }
-
-  const t = new TwitterService();
-  t.SendTweet(req.body);
-  return res.sendStatus(200);
 });

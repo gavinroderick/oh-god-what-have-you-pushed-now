@@ -1,8 +1,9 @@
 import { TweetV2PostTweetResult, TwitterApi } from "twitter-api-v2";
 import { TwitterConfig } from "./TwitterConfig";
+import { PushEvent } from "@octokit/webhooks-types";
 
 export interface ITwitterService {
-  SendTweet(message: string): TweetV2PostTweetResult | null;
+  SendTweet(message: PushEvent): TweetV2PostTweetResult | null;
 }
 
 export class TwitterService implements ITwitterService {
@@ -18,7 +19,7 @@ export class TwitterService implements ITwitterService {
     });
   }
 
-  public SendTweet(payload: any): TweetV2PostTweetResult | null {
+  public SendTweet(payload: PushEvent): TweetV2PostTweetResult | null {
     var tweetText = this.buildTweet(payload);
     console.log("Info: Sending tweet: " + tweetText);
     this._client.v2
@@ -36,9 +37,9 @@ export class TwitterService implements ITwitterService {
     return null;
   }
 
-  private buildTweet(payload: any): string {
-    const headCommit = payload.head_commit.message;
-    const repo = payload.repository.name;
+  private buildTweet(event: PushEvent): string {
+    const headCommit = event.head_commit?.message;
+    const repo = event.repository.name;
     return `Heads up, Gavin just pushed "${headCommit}" to the "${repo}" repo...`;
   }
 }
