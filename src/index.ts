@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import { WebhookValidator } from "./WebhookValidator";
 import { TwitterService } from "./TwitterService";
+import { WebhookEvent } from "@octokit/webhooks-types";
 
 dotenv.config();
 
@@ -22,7 +23,7 @@ app.post("/new-push", (req: Request, res: Response) => {
   console.log("Info: /new-push endpoint hit");
 
   if (WebhookValidator.InvalidRequest(req, res) == null) {
-    const t = new TwitterService();
+    const t = new TwitterService(req, req.header("X-GitHub-Event")!);
     t.SendTweet(req.body);
     return res.sendStatus(200);
   }

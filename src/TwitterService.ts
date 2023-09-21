@@ -1,15 +1,21 @@
 import { TweetV2PostTweetResult, TwitterApi } from "twitter-api-v2";
 import { TwitterConfig } from "./TwitterConfig";
-import { PushEvent } from "@octokit/webhooks-types";
+import { PushEvent, WebhookEvent } from "@octokit/webhooks-types";
 
 export interface ITwitterService {
-  SendTweet(message: PushEvent): TweetV2PostTweetResult | null;
+  SendTweet(message: any): TweetV2PostTweetResult | null;
+}
+
+enum GitHubEventType {
+  Push = "push",
+  PullRequest = "pull-request", // TODO: lookup the correct string for this,
 }
 
 export class TwitterService implements ITwitterService {
   private _client: TwitterApi;
+  private _eventType: GitHubEventType;
 
-  constructor() {
+  constructor(body: any, eventType: string) {
     const config = new TwitterConfig();
     this._client = new TwitterApi({
       appKey: config.appKey,
@@ -17,9 +23,18 @@ export class TwitterService implements ITwitterService {
       accessToken: config.accessToken,
       accessSecret: config.accessSecret,
     });
+
+    this._eventType = eventType as GitHubEventType;
   }
 
-  public SendTweet(payload: PushEvent): TweetV2PostTweetResult | null {
+  SendTweet(message: any): TweetV2PostTweetResult | null {
+    if (this._eventType === GitHubEventType.Push) {
+      this.SendPushTweet(message);
+    }
+    return null;
+  }
+
+  private SendPushTweet(payload: PushEvent): TweetV2PostTweetResult | null {
     var tweetText = this.buildTweet(payload);
     console.log("Info: Sending tweet: " + tweetText);
     this._client.v2
